@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="fw-bold mt-3 mb-5">Order Detail</h1>
+    <div class="row">
+        <div class="col-lg-8">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i, j in order.detail.items() %}
+                    <tr>
+                        <td>{{ j.name }}</td>
+                        <td>{{ j.quantity }}</td>
+                        <td>NT$ {{ '{:,}'.format(j.quantity*j.price) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-lg-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <p>Order Date: {{ order.created_at.strftime('%Y-%m-%d') }}</p>
+                    <p>Invoice Number: {{ order.invoice_id }}</p>
+                    <p>Name: {{ order.full_name }}</p>
+                    <p>Delivery Address: {{ ' '.join(order.address.values()) }}</p>
+                    <p>Shipping: NT$ {{ '{:,}'.format(order.shipping) }}</p>
+                    <hr>
+                    <p class="fw-bold">Total: NT$ {{ '{:,}'.format(order.total) }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

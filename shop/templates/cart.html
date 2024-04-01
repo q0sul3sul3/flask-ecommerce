@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div>
+                                        <h1>My Cart</h1>
+                                        <p class="mb-0 text-muted">You have {{ cart_quantity }} item(s) in your cart.</p>
+                                    </div>
+                                </div>
+                                <hr/>
+                                {% for i, j in session['cart'].items() %}
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 col-lg-2 col-xl-2 py-2">
+                                        <img src="https://{{ bucket }}.s3.{{ region }}.amazonaws.com/{{ j.image }}" class="img-fluid" alt="{{ j.name }}" width="650">
+                                    </div>
+                                    <div class="col-md-3 col-lg-3 col-xl-3 py-2">
+                                        <input type="hidden" id="item_id" class="item_id" value="{{ i }}">
+                                        <h6 class="text-muted">{{ j.name }}</h6>
+                                    </div>
+                                    <div class="col-md-3 col-lg-3 col-xl-3 d-flex py-2">
+                                        <input type="button" class="btn btn-light" value="-" onclick="decreaseQuantity({{ i }})">
+                                        <input type="text" class="form-control" id="quantity{{ i }}" name="quantity" value="{{ j.quantity }}" min="1">
+                                        <input type="button" class="btn btn-light" value="+" onclick="increaseQuantity({{ i }})">
+                                    </div>
+                                    <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1 py-2">
+                                        <h6 class="mb-0">NT$ {{ '{:,}'.format(j.price) }}</h6>
+                                    </div>
+                                    <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                                        <a class="text-decoration-none" onclick="deleteItem({{ i }})"><i class="bi bi-trash" style="font-size: 1.5rem; color: lightgrey;"></i></a>
+                                    </div>
+                                </div>
+                                <hr/>
+                                {% endfor %}
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="card text-white rounded-3" style="background-color: #203A56">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <h3 class="fw-bold mb-0">Order Summary</h3>
+                                        </div>
+                                        <hr/>
+                                        <div class="d-flex justify-content-between">
+                                            <p class="mb-2">Subtotal</p>
+                                            <p class="mb-2">NT$ {{ '{:,}'.format(total) }}</p>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <p class="mb-2">Shipping</p>
+                                            <p class="mb-2">Calculated at checkout</p>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <form action="{{ url_for('create_checkout_session') }}" method="POST">
+                                                <button class="btn btn-light" type="submit" id="checkout-button">Checkout</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<!-- Stripe JS -->
+<script src="https://js.stripe.com/v3/"></script>
+
+<script>
+    function decreaseQuantity(id) {
+        var quantity = parseInt(document.getElementById("quantity" + id).value);
+        if (quantity > 1) {
+            quantity--;
+            document.getElementById("quantity" + id).value = quantity;
+            updateQuantity(id, quantity);
+        }
+    }
+
+    function increaseQuantity(id) {
+        var quantity = parseInt(document.getElementById("quantity" + id).value);
+        quantity++;
+        document.getElementById("quantity" + id).value = quantity;
+        updateQuantity(id, quantity);
+    }
+
+    function updateQuantity(id, quantity) {
+        fetch("{{ url_for('update_cart') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Csrftoken": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({
+                id: id,
+                quantity: quantity
+            })
+        }).then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                console.error("Something went wrong");
+            }
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+</script>
+
+<script>
+    function deleteItem(id) {
+        fetch("{{ url_for('delete_cart') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Csrftoken": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    id: id
+                })
+            })
+            .then(function(response) {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    console.error("Something went wrong");
+                }
+            })
+            .catch(function(error) {
+                console.error(error);
+            });
+    };
+</script>
+{% endblock %}

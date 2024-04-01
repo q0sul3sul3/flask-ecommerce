@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="card" style="width: 400px;">
+            <div class="card-body">
+                <h1 class="display-5 fw-lighter">Welcome</h1>
+                <hr>
+                <form method="post">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.username(class="form-control", placeholder="Username") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.password(class="form-control", placeholder="Password") }}
+                    </div>
+                    <div class="mb-3 d-grid">
+                        {{ form.submit(class="btn btn-light") }}
+                    </div>
+                </form>
+                <div>Don't have an account? <a href="{{ url_for('register') }}">Sign Up</a></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

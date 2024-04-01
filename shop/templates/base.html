@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        Grace
+    </title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+
+    <!-- Navbar -->
+    <header class="p-3 text-bg-dark">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="{{ url_for('index') }}" class="nav-link px-2 text-secondary disabled">Grace</a></li>
+                    <li><a href="{{ url_for('index') }}" class="nav-link px-2 text-white">Shop</a></li>
+                    <li><a href="{{ url_for('cart') }}" class="nav-link px-2 text-white">Cart<span class="badge bg-primary text-white ms-1 rounded-pill">{{ cart_quantity }}</span></a></li>
+
+                    {% if current_user.is_authenticated %}
+                    <li class="dropdown">
+                        <a href="#" class="nav-link dropdown-toggle px-2 text-white" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ current_user.username }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('order') }}">Order History</a></li>
+                            {% if current_user.id==1 %}
+                            <li><a class="dropdown-item" href="{{ url_for('add_item') }}">Add Item</a></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Log Out</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li><a href="{{ url_for('login') }}" class="nav-link px-2 text-white">Log In</a></li>
+                    <li><a href="{{ url_for('register') }}" class="nav-link px-2 text-white">Sign Up</a></li>
+                    {% endif %}
+                </ul>
+                <form method="POST" action="{{ url_for('search') }}" class="d-flex" role="search">
+                    {{ search_form.hidden_tag() }}
+                    {{ search_form.search(class="form-control me-3 form-control-dark text-bg-dark", placeholder="Search...") }}
+                    {{ search_form.submit(class="btn btn-warning") }}
+                </form>
+            </div>
+        </div>
+    </header>
+    <!-- Message Flashing -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, msg in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}
+    {% endblock %}
+</body>

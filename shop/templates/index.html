@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-sm-3 mb-3">
+            <div class="list-group">
+                <a class="list-group-item list-group-item-action" href="{{ url_for('index') }}">All</a>
+                {% for category in categories %}
+                <a class="list-group-item list-group-item-action" href="{{ url_for('category', slug=category.slug) }}">{{ category.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div class="row">
+                {% for item in items %}
+                <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                    <div class="card">
+                        <img src="https://{{ bucket }}.s3.{{ region }}.amazonaws.com/{{ item.image }}" class="card-img-top" alt="{{ item.name }}" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <a href="{{ url_for('item', item_id=item.id) }}" class="link-dark text-decoration-none stretched-link"><h5 class="card-title">{{ item.name }}</h5></a>
+                            <p class="card-text text-muted">NT$ {{ '{:,}'.format(item.price) }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <!-- pagination -->
+            <div class="mt-5">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        {% if prev_url %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ prev_url }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo;</span>
+                        </li>
+                        {% endif %}
+                        {% if next_url %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ next_url }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&raquo;</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

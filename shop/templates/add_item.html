@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row d-flex justify-content-center">
+        <div class="card" style="width: 500px;">
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label") }}
+                        {% if form.name.errors %}
+                            {{ form.name(class="form-control is-invalid", placeholder="Name") }}
+                            <div id="validationServer03Feedback" class="invalid-feedback">
+                            {% for error in form.name.errors %}
+                                {{ error }}
+                            {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.name(class="form-control", placeholder="Name") }}
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.category.label(class="form-label") }}
+                        {% if form.category.errors %}
+                            {{ form.category(class="form-control is-invalid", placeholder="Category") }}
+                            <div id="validationServer03Feedback" class="invalid-feedback">
+                            {% for error in form.category.errors %}
+                                {{ error }}
+                            {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.category(class="form-control", placeholder="Category") }}
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.price.label(class="form-label") }}
+                        {% if form.price.errors %}
+                            {{ form.price(class="form-control is-invalid", placeholder="Price") }}
+                            <div id="validationServer03Feedback" class="invalid-feedback">
+                            {% for error in form.price.errors %}
+                                {{ error }}
+                            {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.price(class="form-control", placeholder="Price") }}
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.description.label(class="form-label") }}
+                        {% if form.description.errors %}
+                            {{ form.description(class="form-control is-invalid", placeholder="Description") }}
+                            <div id="validationServer03Feedback" class="invalid-feedback">
+                            {% for error in form.description.errors %}
+                                {{ error }}
+                            {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.description(class="form-control", placeholder="Description") }}
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.image.label(class="form-label") }}
+                        {% if form.image.errors %}
+                            {{ form.image(class="form-control is-invalid", placeholder="Image") }}
+                            <div id="validationServer03Feedback" class="invalid-feedback">
+                            {% for error in form.image.errors %}
+                                {{ error }}
+                            {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.image(class="form-control", placeholder="Image") }}
+                        {% endif %}
+                    </div>
+                    <div class="mb-3 d-grid">
+                        {{ form.submit(class="btn btn-light") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
