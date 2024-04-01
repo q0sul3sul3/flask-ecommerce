@@ -41,6 +41,28 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Log In')
 
 
+class ResetPasswodRequestForm(FlaskForm):
+    email = StringField(
+        'Email', validators=[Email(), DataRequired(), Length(min=4, max=50)]
+    )
+    submit = SubmitField('Submit')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError('Incorrect. Please try again.')
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField(
+        'Password', validators=[DataRequired(), Length(min=4, max=20)]
+    )
+    comfirm_password = PasswordField(
+        'Comfirm Password', validators=[EqualTo('password'), DataRequired()]
+    )
+    submit = SubmitField('Save')
+
+
 class SearchForm(FlaskForm):
     search = StringField('Search', validators=[DataRequired(), Length(min=3)])
     submit = SubmitField('Search')

@@ -1,9 +1,10 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
+import jwt
 from flask_login import UserMixin
 
-from . import bcrypt, db, login_manager
+from . import app, bcrypt, db, login_manager
 
 
 @login_manager.user_loader
@@ -30,6 +31,25 @@ class User(db.Model, UserMixin):
 
     def check_password_correction(self, attempted_password):
         return bcrypt.check_password_hash(self.password_hash, attempted_password)
+
+    def generate_reset_token(self, seconds=600):
+        encoded = jwt.encode(
+            {
+                'email': self.email,
+                'exp': datetime.now(tz=timezone.utc) + timedelta(seconds=seconds),
+            },
+            app.config['SECRET_KEY'],
+            algorithm='HS256',
+        )
+        return encoded
+
+    def verify_reset_token(token):
+        try:
+            decoded = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            email = decoded['email']
+        except:
+            return None
+        return User.query.filter_by(email=email).first()
 
 
 class Category(db.Model):
